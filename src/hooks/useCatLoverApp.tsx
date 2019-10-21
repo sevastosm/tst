@@ -31,49 +31,41 @@ const useCatLoverApp = () => {
     });
   };
 
-  useEffect(() => {
-    if (state.catlist.length == 0)
-      catApis.getTenRandomCats().then((response: any) => {
-        setCatBreedList(response.data);
-        setstate((state: Iappstate) => ({ ...state, catlist: response.data }));
-      });
-  }, []);
-
   const setCatBreedList = (list: any) => {
-    let breedList: any=[] ;
-    let prevlist = state.breedsList
+    let breedList: any = [];
+    let prevlist = state.breedsList;
     list.map((listitem: any) => {
       if (listitem.breeds[0]) {
-       let breedItem = listitem.breeds[0];
+        let breedItem = listitem.breeds[0];
 
-    //     if(prevlist.length>0){
-    //     let existitem = prevlist.filter((item: any) => {
-    //         return item.id=== listitem.breeds[0].id;
-    //     });
-    
-    //     console.log("exist", existitem);
-    //     if (existitem.length ===1) {
-    //         return
-    //     }
-    // }
-    // else{
-            breedList.push(breedItem);
-        }
+        //     if(prevlist.length>0){
+        //     let existitem = prevlist.filter((item: any) => {
+        //         return item.id=== listitem.breeds[0].id;
+        //     });
+
+        //     console.log("exist", existitem);
+        //     if (existitem.length ===1) {
+        //         return
+        //     }
+        // }
+        // else{
+        breedList.push(breedItem);
+      }
       //}
     });
     let newCatBreedlist = [...state.breedsList];
     newCatBreedlist.push(...breedList);
 
-    let prevlists =newCatBreedlist
-    console.log("nereedList", prevlists);
-    var jobsUnique = prevlists.filter(function(item, index){
-        return prevlists.indexOf(item) >= index;
+    let prevlists = newCatBreedlist;
+    console.log("No FILTERD BREED", newCatBreedlist);
+    var jobsUnique = prevlists.filter(function(item, index) {
+      return prevlists.indexOf(item) === index;
     });
-    
-    // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
-    console.log(jobsUnique);
 
-    setstate((state: Iappstate) => ({ ...state, breedsList: jobsUnique }));
+    // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
+    console.log("FILTERD BREED", jobsUnique);
+
+    //setstate((state: Iappstate) => ({ ...state, breedsList: jobsUnique }));
   };
 
   return {
