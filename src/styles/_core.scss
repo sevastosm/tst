@@ -1,0 +1,21 @@
+
+$base-color: #ffff;
+
+body{
+
+    background-color: $base-color;
+}
+.d-flex{
+    display: flex;
+}
+
+.fl-wrap{
+    flex-wrap: wrap;
+}
+
+#root{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
