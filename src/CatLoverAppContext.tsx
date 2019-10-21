@@ -48,24 +48,33 @@ const CatLoverAppProvider = (props: any) => {
         });
         let newCatBreedlist: any = state.breedsList;
         newCatBreedlist.push(...breedList);
-
-        let prevlists: any = newCatBreedlist;
+        let prevlists = new Array();
+        prevlists = newCatBreedlist;
         console.log("No FILTERD BREED", prevlists);
-        const removeDuplicates = (originalArray: any, prop: any) => {
-          var newArray = [];
-          var lookupObject: any = {};
+        // const removeDuplicates = (originalArray: any, prop: any) => {
+        //   var newArray = [];
+        //   var lookupObject: any = {};
 
-          for (var i in originalArray) {
-            lookupObject[originalArray[i][prop]] = originalArray[i];
-          }
+        //   for (var i in originalArray) {
+        //     lookupObject[originalArray[i][prop]] = originalArray[i];
+        //   }
 
-          for (i in lookupObject) {
-            newArray.push(lookupObject[i]);
-          }
-          return newArray;
-        }
+        //   for (i in lookupObject) {
+        //     newArray.push(lookupObject[i]);
+        //   }
+        //   return newArray;
+        // }
 
-        var uniqueArray = removeDuplicates(prevlists, "id")
+        // var uniqueArray = removeDuplicates(prevlists, "id")
+
+
+
+
+        const uniqueArray = prevlists.filter((thing: any, index: any) => {
+          return index === prevlists.findIndex((obj: any) => {
+            return JSON.stringify(obj) === JSON.stringify(thing);
+          });
+        });
 
         // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
         console.log("FILTERD BREED", uniqueArray);
