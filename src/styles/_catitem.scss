@@ -11,3 +11,8 @@
     /* border-width: 7px; */
     opacity: 0.8;
 }
+.MuiCardHeader-root + svg {
+    display: flex;
+    width: 200px;
+    margin: auto;
+}

@@ -3,7 +3,6 @@ import useCatLoverApp from "../../hooks/useCatLoverApp"
 import { makeStyles } from "@material-ui/core/styles";
 import {Link } from "@reach/router";
 import Avatar from "@material-ui/core/Avatar";
-import Grid from "@material-ui/core/Grid";
 import { ReactComponent as DefaultImage} from "../../assets/img/default_cat.svg";
 
 const useStyles = makeStyles({
@@ -19,13 +18,13 @@ const useStyles = makeStyles({
   }
 });
 
-const CatItem= (data:any)=> {
+const FavouriteCatitem= (data:any)=> {
   const {getCatDetails}=useCatLoverApp()
 
   const classes = useStyles(makeStyles);
 
   let item = data.data
-  let {url,id}=data.data
+  let {url,id}=data.data.image
 
   return (
     <Link onClick={()=>getCatDetails(id)} state={{ catitem: item }} draggable to={`/cat/${id}`}>
@@ -41,4 +40,4 @@ const CatItem= (data:any)=> {
     </Link>
   );
 }
-export default CatItem
+export default FavouriteCatitem

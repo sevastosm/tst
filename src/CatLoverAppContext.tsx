@@ -1,95 +1,70 @@
-import React, { useState, useEffect } from "react";
-import { Iappstate } from "./appstore/appState";
+import React, { useState,useEffect } from 'react';
 import catApis from "./helpers/apicalls";
+import {removeDublicates}from "./helpers/general";
+
 
 // initilize
-const CatLoverAppContext = React.createContext([{}, () => { }]);
+const CatLoverAppContext=React.createContext([{}, () => {}]);
+const CatLoverAppProvider =(props:any)=>{
 
-const CatLoverAppProvider = (props: any) => {
+  
   const [state, setState] = useState({
-    catlist: [],
-    pageNumber: 0,
-    selectedCat: [],
-    favoriteList: [],
-    dataLoaded: false,
-    breedsList: []
-  });
-  useEffect(() => {
-    catApis.getTenRandomCats().then((response: any) => {
-      // console.log("1 BREED");
-      setState((state: any) => ({
-        ...state,
-        dataLoaded: true,
-        catlist: response.data
-      }));
+      catlist: [],
+      pageNumber: 0,
+      selectedCat: [],
+      selectedBreed: "no",
+      favoriteList:[],
+      dataLoaded:false,
+      breedsList:[]
+    })
 
-      const setCatBreedList = (list: any) => {
-        let breedList: any = [];
-        let prevlist = state.breedsList;
-        list.map((listitem: any) => {
-          if (listitem.breeds[0]) {
-            let breedItem = listitem.breeds[0];
+    useEffect(() => {
+      catApis.getTenRandomCats().then((response: any) => {
+       setCatBreedList(response.data);
+      });
+      catApis.getFavouritesList().then((response: any) => {
+        setCatFavouriteList(response.data);
+       });
+    }, []);
 
-            //     if(prevlist.length>0){
-            //     let existitem = prevlist.filter((item: any) => {
-            //         return item.id=== listitem.breeds[0].id;
-            //     });
+    const setCatFavouriteList = (list:any) => {
 
-            //     console.log("exist", existitem);
-            //     if (existitem.length ===1) {
-            //         return
-            //     }
-            // }
-            // else{
-            if (breedItem !== [])
-              breedList.push(breedItem);
-          }
-          //}
-        });
-        let newCatBreedlist: any = state.breedsList;
-        newCatBreedlist.push(...breedList);
-        let prevlists = new Array();
-        prevlists = newCatBreedlist;
-        console.log("No FILTERD BREED", prevlists);
-        // const removeDuplicates = (originalArray: any, prop: any) => {
-        //   var newArray = [];
-        //   var lookupObject: any = {};
+      let catlist:any=list
+      let previousCatlist: any = state.favoriteList;
+      previousCatlist.push(...catlist);
+      setState((state: any) => ({ ...state, favoriteList: previousCatlist }));
+    };
+    const setCatBreedList = (list:any) => {
 
-        //   for (var i in originalArray) {
-        //     lookupObject[originalArray[i][prop]] = originalArray[i];
-        //   }
-
-        //   for (i in lookupObject) {
-        //     newArray.push(lookupObject[i]);
-        //   }
-        //   return newArray;
-        // }
-
-        // var uniqueArray = removeDuplicates(prevlists, "id")
+      let breedList: any = [];
+      let catlist:any=list
+      list.map((listitem: any) => {
+        if (listitem.breeds[0]) {
+          let breedItem = listitem.breeds[0];
+          if (breedItem !== [])
+            breedList.push(breedItem);
+        }
+      });
+      let previousCatlist: any = state.catlist;
+      let previousCatBreedlist: any = state.breedsList;
+      previousCatlist.push(...catlist);
+      previousCatBreedlist.push(...breedList);
+      console.log("No FILTERD CaTS BREED", previousCatlist);
+      console.log("No FILTERD BREED", previousCatBreedlist);
+      const filteredCatsList = removeDublicates(previousCatlist)
+      const filteredBreedList = removeDublicates(previousCatBreedlist)
+      // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
+      console.log("FILTERD CATS BREED", filteredCatsList);
+      console.log("FILTERD BREED", filteredBreedList);
+      setState((state: any) => ({ ...state, breedsList: filteredBreedList,catlist: filteredCatsList, dataLoaded: true, }));
+    };
 
 
-
-
-        const uniqueArray = prevlists.filter((thing: any, index: any) => {
-          return index === prevlists.findIndex((obj: any) => {
-            return JSON.stringify(obj) === JSON.stringify(thing);
-          });
-        });
-
-        // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
-        console.log("FILTERD BREED", uniqueArray);
-
-        setState((state: any) => ({ ...state, breedsList: uniqueArray }));
-      };
-
-      setCatBreedList(response.data);
-    });
-  }, []);
-  return (
-    <CatLoverAppContext.Provider value={[state, setState]}>
-      {console.log("BREED state", state)}
-      {props.children}
-    </CatLoverAppContext.Provider>
-  );
-};
-export { CatLoverAppContext, CatLoverAppProvider };
+    return (
+        <CatLoverAppContext.Provider value={[state, setState]}>
+          {console.log('APP STATE',state)}
+          {props.children}
+        </CatLoverAppContext.Provider>
+      );
+}
+export {CatLoverAppContext,CatLoverAppProvider}

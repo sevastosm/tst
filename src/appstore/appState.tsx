@@ -1,17 +1,19 @@
 export interface Iappstate {
   catlist: [];
   actions?: any;
-  pageNumer: number;
+  pageNumber: number;
   selectedCat: [];
   favoriteList:[];
+  breedsList:[]
   dataLoaded:boolean
 }
 
 let appState: Iappstate = {
   catlist: [],
-  pageNumer: 0,
+  pageNumber: 0,
   selectedCat: [],
   favoriteList:[],
+  breedsList:[],
   dataLoaded:false
 };
 export default appState;
