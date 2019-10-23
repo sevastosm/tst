@@ -51,7 +51,7 @@ const CatDetailsContainer = (props: any) => {
   const { selectedCat, setCatAsFavorite, getCatDetails, favoriteList, deleteFromFavorites } = useCatLoverApp()
   console.log("selectedCat", selectedCat)
 
-  let isCatFavourite: any = []
+  let isCatinFavourite: any = []
 
   let propsLocationExist = isEmtyOrNullArrary(props.data.location)
   let favoritesListExist = isEmtyOrNullArrary(favoriteList)
@@ -67,15 +67,20 @@ const CatDetailsContainer = (props: any) => {
   //   }
   //   return cat
   // }
+  const [stateFavourite, setcatfavourite] = useState(false)
 
-  let catIfavouriteslist: any = []
+  let catInfavouriteslist: any = []
 
   function isIsFavoriteList(obj: any, list: any) {
-    if (favoritesListExist) {
+    if (!favoritesListExist) {
       var i;
       for (i = 0; i < list.length; i++) {
         if (list[i].image_id === obj[0].id) {
-          catIfavouriteslist = [list[i]]
+          catInfavouriteslist = [list[i]]
+          if (!stateFavourite) {
+            setcatfavourite(false)
+
+          }
           return true;
         }
       }
@@ -84,14 +89,14 @@ const CatDetailsContainer = (props: any) => {
     return false;
   }
 
-  const [stateFavourite, setcatfavourite] = useState(false)
 
   const handleSetItemAsFaforite = () => {
     setCatAsFavorite(selectedCat[0].id, selectedCat)
 
   }
   const handleDeletItemFromFavorites = () => {
-    deleteFromFavorites(catIfavouriteslist[0].id, selectedCat)
+
+    deleteFromFavorites(catInfavouriteslist[0].id, selectedCat)
   }
 
   useEffect(() => {
@@ -102,10 +107,10 @@ const CatDetailsContainer = (props: any) => {
     }
   }, []);
   useEffect(() => {
-    isCatFavourite = isIsFavoriteList(selectedCat, favoriteList)
-    if (isCatFavourite && !stateFavourite) {
-      setcatfavourite(true)
-    }
+    let isCatFavourite = isIsFavoriteList(selectedCat, favoriteList)
+    // if (isCatFavourite && !stateFavourite) {
+    //   setcatfavourite(true)
+    // }
     if (!isCatFavourite && stateFavourite) {
       setcatfavourite(false)
     }
@@ -154,7 +159,7 @@ const CatDetailsContainer = (props: any) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {stateFavourite ? <div onClick={handleDeletItemFromFavorites}>'X'</div> : <IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
+        {!stateFavourite ? <div onClick={handleDeletItemFromFavorites}>'X'</div> : <IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>}
 
