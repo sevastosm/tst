@@ -2,7 +2,8 @@ import { useContext, useEffect } from "react";
 import { CatLoverAppContext } from "../CatLoverAppContext";
 import catApis from "../helpers/apicalls";
 import { Iappstate } from "../appstore/appState";
-import {removeDublicates}from "../helpers/general";
+import { removeDublicates } from "../helpers/general";
+import { isEmtyOrNullArrary } from "../helpers/general"
 
 
 const useCatLoverApp = () => {
@@ -13,19 +14,19 @@ const useCatLoverApp = () => {
       return cat.id === id;
     });
     // if not in catlist
-    if(selectedCat.length===0){
-     catApis.getCAtById(id).then((response:any)=>{
-      console.log("CAt DETAILS FROM API",response);
+    if (!isEmtyOrNullArrary(selectedCat)) {
+      catApis.getCAtById(id).then((response: any) => {
+        console.log("CAt DETAILS FROM API", response);
 
-      setstate((state: Iappstate) => ({ ...state, selectedCat:[response.data]}));
-     })
+        setstate((state: Iappstate) => ({ ...state, selectedCat: [response.data] }));
+      })
 
-    }else{
+    } else {
 
-      setstate((state: Iappstate) => ({ ...state, selectedCat:selectedCat}));
+      setstate((state: Iappstate) => ({ ...state, selectedCat: selectedCat }));
     }
 
-  //  setSelectesCat(selectedCat)
+    //  setSelectesCat(selectedCat)
     return selectedCat;
   };
 
@@ -37,7 +38,7 @@ const useCatLoverApp = () => {
     });
   };
 
-  const setCatAsFavorite =(id:string,cat:any)=>{
+  const setCatAsFavorite = (id: string, cat: any) => {
     // let mcatlist=state.catlist
 
     // let newCatlist = mcatlist.filter((item:any) => {
@@ -45,44 +46,45 @@ const useCatLoverApp = () => {
     // })
 
     // setstate((state: any) => ({ ...state, catlist:newCatlist}));
-    console.log("Stede favorite",cat);
+    console.log("Stede favorite", cat);
 
     catApis.setCatAsFavorite(id).then((response: any) => {
       catApis.getFavouritesList().then((response: any) => {
         setCatFavouriteList(response.data);
-       });
+      });
       console.log(response);
     });
   }
-  const deleteFromFavorites =(id:number,cat:any)=>{
+  const deleteFromFavorites = (id: number, cat: any) => {
     setCatBreedList(cat);
     catApis.deleteFromFavorites(id).then((response: any) => {
       console.log(response);
-      if(response.status=== 200){
-      catApis.getFavouritesList().then((response: any) => {
-         setCatFavouriteList(response.data);
-       });
+      if (response.status === 200) {
+        catApis.getFavouritesList().then((response: any) => {
+          setCatFavouriteList(response.data);
+        });
       }
     });
   }
 
-  const setCatFavouriteList = (list:any) => {
+  const setCatFavouriteList = (list: any) => {
     setstate((state: any) => ({ ...state, favoriteList: list }));
   };
-  const setSelectedBreed = (id:any) => {
+  const setSelectedBreed = (id: any) => {
     setstate((state: any) => ({ ...state, selectedBreed: id }));
   };
 
   const setCatBreedList = (list: any) => {
 
     let breedList: any = [];
-    let catlist:any=list
+    let catlist: any = list
     list.map((listitem: any) => {
       if (listitem.breeds) {
-        if (listitem.breeds.length>0) {
-        let breedItem = listitem.breeds[0];
+        if (listitem.breeds.length > 0) {
+          let breedItem = listitem.breeds[0];
           breedList.push(breedItem);
-        }}
+        }
+      }
     });
     let previousCatlist: any = state.catlist;
     let previousCatBreedlist: any = state.breedsList;
@@ -95,7 +97,7 @@ const useCatLoverApp = () => {
     // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
     console.log("FILTERD CATS BREED", filteredCatsList);
     console.log("FILTERD BREED", filteredBreedList);
-    setstate((state: Iappstate) => ({ ...state, breedsList: filteredBreedList,catlist: filteredCatsList, dataLoaded: true, }));
+    setstate((state: Iappstate) => ({ ...state, breedsList: filteredBreedList, catlist: filteredCatsList, dataLoaded: true, }));
   };
 
   return {
@@ -106,7 +108,7 @@ const useCatLoverApp = () => {
     setCatAsFavorite,
     deleteFromFavorites,
     catlist: state.catlist,
-    selectedBreed:state.selectedBreed,
+    selectedBreed: state.selectedBreed,
     selectedCat: state.selectedCat,
     favoriteList: state.favoriteList,
     dataLoaded: state.dataLoaded,

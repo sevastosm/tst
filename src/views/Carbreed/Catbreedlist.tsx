@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Catbreedlist= (data:any) => {
-  const {breedsList,setSelectedBreed}=useCatLoverApp()
-  let jobsUnique:any = breedsList.filter(function(item:any, index:any){
+const Catbreedlist = (data: any) => {
+  const { breedsList, setSelectedBreed, selectedBreed } = useCatLoverApp()
+  let jobsUnique: any = breedsList.filter(function (item: any, index: any) {
     return breedsList.indexOf(item) >= index;
-});
-const classes = useStyles();
+  });
+  const classes = useStyles();
   const [values, setValues] = React.useState({
     age: "no",
     name: '',
@@ -41,19 +41,19 @@ const classes = useStyles();
 
   const handleChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     setSelectedBreed(event.target.value)
-     setValues(oldValues => ({
-       ...oldValues,
-       [event.target.name as string]: event.target.value,
-     }));
+    setValues(oldValues => ({
+      ...oldValues,
+      [event.target.name as string]: event.target.value,
+    }));
   };
   return (
-      <form className={classes.root} autoComplete="off">
+    <form className={classes.root} autoComplete="off">
       <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel ref={inputLabel} htmlFor="outlined-age-simple">
           BREEDS
         </InputLabel>
         <Select
-          value={values.age}
+          value={selectedBreed}
           onChange={handleChange}
           labelWidth={labelWidth}
           inputProps={{
@@ -64,9 +64,9 @@ const classes = useStyles();
           <MenuItem value="no">
             <em>No Breed</em>
           </MenuItem>
-          {jobsUnique.map((breed:any)=>{
-                return  <MenuItem key={breed.id} value={breed.id}>{breed.name}</MenuItem>
-            })}
+          {jobsUnique.map((breed: any) => {
+            return <MenuItem key={breed.id} value={breed.id}>{breed.name}</MenuItem>
+          })}
         </Select>
       </FormControl>
     </form>

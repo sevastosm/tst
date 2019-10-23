@@ -1,6 +1,7 @@
-import React, { useEffect,useState } from "react";
-import { ReactComponent as DefaultImage} from "../assets/img/default_cat.svg";
+import React, { useEffect, useState } from "react";
+import { ReactComponent as DefaultImage } from "../assets/img/default_cat.svg";
 import useCatLoverApp from "../hooks/useCatLoverApp"
+import { isEmtyOrNullArrary } from "../helpers/general"
 
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -45,51 +46,78 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CatDetailsContainer =(props:any)=>{
-  console.log("DAITAILS",props)
-  const {selectedCat,setCatAsFavorite,getCatDetails,favoriteList,deleteFromFavorites}=useCatLoverApp()
-  console.log("selectedCat",selectedCat)
+const CatDetailsContainer = (props: any) => {
+  console.log("DAITAILS", props)
+  const { selectedCat, setCatAsFavorite, getCatDetails, favoriteList, deleteFromFavorites } = useCatLoverApp()
+  console.log("selectedCat", selectedCat)
 
-  let isCatFavourite:any=[]
-  
-  const isFavorite = ()=>{
-    let cat:any =[]
-    if(favoriteList.length>0&&favoriteList&&selectedCat.length>0){
-      cat = favoriteList.filter((cat:any)=>{
-      return  cat.image_id===selectedCat[0].id
-       })
-       console.log("isfavorite",cat)}
-       return cat
+  let isCatFavourite: any = []
+
+  let propsLocationExist = isEmtyOrNullArrary(props.data.location)
+  let favoritesListExist = isEmtyOrNullArrary(favoriteList)
+  let selectedCatExist = isEmtyOrNullArrary(selectedCat)
+
+  // const isFavorite = () => {
+  //   let cat: any = selectedCat
+  //   if (!favoritesListExist && !selectedCatExist) {
+  //     cat = favoriteList.filter((cat: any) => {
+  //       return cat.image_id === selectedCat[0].id
+  //     })
+  //     console.log("isfavorite", cat)
+  //   }
+  //   return cat
+  // }
+
+  let catIfavouriteslist: any = []
+
+  function isIsFavoriteList(obj: any, list: any) {
+    if (favoritesListExist) {
+      var i;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].image_id === obj[0].id) {
+          catIfavouriteslist = [list[i]]
+          return true;
+        }
       }
-  const [stateFavourite,setcatfavourite]= useState(false)
 
-  const handleSetItemAsFaforite =()=>{
-    setCatAsFavorite(selectedCat[0].id,selectedCat)
+    }
+    return false;
+  }
+
+  const [stateFavourite, setcatfavourite] = useState(false)
+
+  const handleSetItemAsFaforite = () => {
+    setCatAsFavorite(selectedCat[0].id, selectedCat)
 
   }
-  const handleDeletItemFromFavorites =()=>{
-    deleteFromFavorites(isCatFavourite[0].id,selectedCat)
+  const handleDeletItemFromFavorites = () => {
+    deleteFromFavorites(catIfavouriteslist[0].id, selectedCat)
   }
 
   useEffect(() => {
-   if(!props.data.location.state||favoriteList.length===0)
-   {
-    getCatDetails(props.data.catId)
-     console.log("NOt HAS STATE")
-   }
-  
+    if (propsLocationExist || favoriteList.length === 0) {
+      getCatDetails(props.data.catId)
+      console.log("NOt HAS STATE", propsLocationExist)
+
+    }
   }, []);
   useEffect(() => {
-
-    isCatFavourite = isFavorite()
-    if(isCatFavourite.length>0&& !stateFavourite){
+    isCatFavourite = isIsFavoriteList(selectedCat, favoriteList)
+    if (isCatFavourite && !stateFavourite) {
       setcatfavourite(true)
     }
-    if(isCatFavourite.length===0&& stateFavourite){
+    if (!isCatFavourite && stateFavourite) {
       setcatfavourite(false)
     }
-   });
- 
+  });
+  const hasSelectedCat = () => {
+    if (selectedCat == []) {
+      return selectedCat.length < 0
+    }
+  }
+
+
+
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -113,23 +141,23 @@ const CatDetailsContainer =(props:any)=>{
         }
         title="Shrimp and Chorizo Paella"
         subheader="September 14, 2016"
-        />
-      {selectedCat.length==0?<DefaultImage/>:( <CardMedia
+      />
+      {selectedCatExist ? (<CardMedia
         className={classes.media}
         image={selectedCat[0].url}
         title="Paella dish"
-        /> ) }
-    
+      />) : <DefaultImage />}
+
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p" style={{wordBreak:'break-all'}}>
-        {JSON.stringify(props.data.location)} 
+        <Typography variant="body2" color="textSecondary" component="p" style={{ wordBreak: 'break-all' }}>
+          {JSON.stringify(selectedCat)}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {stateFavourite?<div onClick={handleDeletItemFromFavorites}>'X'</div>:<IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
+        {stateFavourite ? <div onClick={handleDeletItemFromFavorites}>'X'</div> : <IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>}
-        
+
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>

@@ -9,3 +9,8 @@ export const removeDublicates = (list: any) => {
   });
   return uniqueArray;
 };
+
+
+export const isEmtyOrNullArrary = (emptyArray: { length: number | null; } | null) => (typeof emptyArray != "undefined" && emptyArray != null && emptyArray.length != null
+  && emptyArray.length > 0)
+
