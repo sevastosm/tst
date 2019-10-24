@@ -1,9 +1,10 @@
 import React from "react";
-import useCatLoverApp from "../../hooks/useCatLoverApp"
+import useCatLoverApp from "../../hooks/useCatLoverApp";
 import { makeStyles } from "@material-ui/core/styles";
-import {Link } from "@reach/router";
+import { Link, Location } from "@reach/router";
 import Avatar from "@material-ui/core/Avatar";
-import { ReactComponent as DefaultImage} from "../../assets/img/default_cat.svg";
+import { ReactComponent as DefaultImage } from "../../assets/img/default_cat.svg";
+import { ReactComponent as Dislike } from "../../assets/img/dislike.svg";
 
 const useStyles = makeStyles({
   avatar: {
@@ -13,31 +14,47 @@ const useStyles = makeStyles({
     border: "5px solid pink",
     width: 100,
     height: 100,
-    cursor:"pointer",
-    margin:'5px'
+    cursor: "pointer",
+    margin: "5px"
   }
 });
 
-const FavouriteCatitem= (data:any)=> {
-  const {getCatDetails}=useCatLoverApp()
+const FavouriteCatitem = (data: any) => {
+  const { deleteFromFavorites } = useCatLoverApp();
 
   const classes = useStyles(makeStyles);
+  
+  let { url, id } = data.data.image;
+  let item = data.data;
 
-  let item = data.data
-  let {url,id}=data.data.image
-
+  const handleDeletItemFromFavorites = () => {
+    deleteFromFavorites(data.data.id,'')
+  }
+ 
   return (
-    <Link onClick={()=>getCatDetails(id)} state={{ catitem: item }} draggable to={`/cat/${id}`}>
-
-{url?(<Avatar
-  alt="Remy Sharp"
-  src={url}
-  className={classes.bigAvatar}
-/>):<DefaultImage/>}
-      
-      
-    
-    </Link>
+    <Location>
+      {({ location }) => (
+        <div>
+        <Link
+          state={{
+            catitem: item,
+            oldLocation: JSON.parse(JSON.stringify(location))
+          }}
+          draggable
+          to={`/cat/${id}`}
+        >
+          {url ? (
+            <Avatar alt="Remy Sharp" src={url} className={classes.bigAvatar} />
+          ) : (
+            <DefaultImage />
+          )}
+        </Link>
+        <div className={'dislike'} onClick={handleDeletItemFromFavorites}>
+          <Dislike/>
+        </div>
+        </div>
+      )}
+    </Location>
   );
-}
-export default FavouriteCatitem
+};
+export default FavouriteCatitem;

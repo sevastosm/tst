@@ -1,23 +1,8 @@
 import React, { useState } from 'react'
 import useCatLoverApp from "../../hooks/useCatLoverApp"
-import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "@reach/router";
-import Avatar from "@material-ui/core/Avatar";
-import Grid from "@material-ui/core/Grid";
+import { Link,Location } from "@reach/router";
 import { ReactComponent as DefaultImage } from "../../assets/img/default_cat.svg";
-
-// const useStyles = [{
-//   avatar: {
-//     margin: 10
-//   },
-//   bigAvatar: {
-//     border: "5px solid pink",
-//     width: 100,
-//     height: 100,
-//     cursor: "pointer",
-//     margin: '5px'
-//   }
-// }]
+import Slide from "@material-ui/core/Slide";
 
 const CatItem = (data: any) => {
   const { getCatDetails } = useCatLoverApp()
@@ -34,12 +19,24 @@ const CatItem = (data: any) => {
   let { url, id } = data.data
 
   return (
-    <Link onClick={() => getCatDetails(id)} state={{ catitem: item }} draggable to={`/cat/${id}`}>
-
-
-      <div style={{ display: imageloaded ? 'block' : "none" }} className={"MuiAvatar-root makeStyles-bigAvatar"}><img alt="Remy Sharp" src={url ? url : ''} className="MuiAvatar-img" onLoad={handleImageLoaded} /></div>
+    <Location>
+    {({ location }) => (
+      //    <Slide
+      //    direction="down"
+      //    timeout={{ enter: 1000 }}
+      //    in={true}
+      //    mountOnEnter
+      //    unmountOnExit
+      //  >
+    <Link state={{ catitem: item,
+      oldLocation: JSON.parse(JSON.stringify(location)), }} draggable to={`/cat/${id}`}>
+      <div style={{ display: imageloaded ? 'block' : "none" }} className={"MuiAvatar-root makeStyles-bigAvatar"}>
+        <img alt="Remy Sharp" src={url ? url : ''} className="MuiAvatar-img" onLoad={handleImageLoaded} /></div>
       <DefaultImage style={{ display: !imageloaded ? 'block' : "none" }} />
     </Link>
+    // </Slide>
+    )}
+     </Location>
   );
 }
 export default CatItem

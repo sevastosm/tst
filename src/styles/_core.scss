@@ -18,6 +18,9 @@ body{
 .fl-wrap{
     flex-wrap: wrap;
 }
+.fl-col{
+    flex-direction: column;
+}
 
 #root{
     display: flex;

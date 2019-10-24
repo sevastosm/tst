@@ -18,12 +18,12 @@ const useCatLoverApp = () => {
       catApis.getCAtById(id).then((response: any) => {
         console.log("CAt DETAILS FROM API", response);
 
-        setstate((state: Iappstate) => ({ ...state, selectedCat: [response.data] }));
+        setstate((state: Iappstate) => ({ ...state, selectedCat: [response.data],catIdLoaded:id }));
       })
 
     } else {
 
-      setstate((state: Iappstate) => ({ ...state, selectedCat: selectedCat }));
+      setstate((state: Iappstate) => ({ ...state, selectedCat: selectedCat,catIdLoaded:id }));
     }
 
     //  setSelectesCat(selectedCat)
@@ -56,7 +56,9 @@ const useCatLoverApp = () => {
     });
   }
   const deleteFromFavorites = (id: number, cat: any) => {
-    setCatBreedList(cat);
+    if(cat){
+      setCatBreedList(cat);
+    }
     catApis.deleteFromFavorites(id).then((response: any) => {
       console.log(response);
       if (response.status === 200) {
@@ -64,6 +66,11 @@ const useCatLoverApp = () => {
           setCatFavouriteList(response.data);
         });
       }
+    });
+  }
+  const getCatFavouriteList=()=>{
+    catApis.getFavouritesList().then((response: any) => {
+      setCatFavouriteList(response.data);
     });
   }
 
@@ -105,6 +112,7 @@ const useCatLoverApp = () => {
     handleLoadMore,
     setCatBreedList,
     setSelectedBreed,
+    getCatFavouriteList,
     setCatAsFavorite,
     deleteFromFavorites,
     catlist: state.catlist,
@@ -112,7 +120,8 @@ const useCatLoverApp = () => {
     selectedCat: state.selectedCat,
     favoriteList: state.favoriteList,
     dataLoaded: state.dataLoaded,
-    breedsList: state.breedsList
+    breedsList: state.breedsList,
+    catIdLoaded:state.catIdLoaded
   };
 };
 

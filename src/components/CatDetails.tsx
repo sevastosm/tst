@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ReactComponent as DefaultImage } from "../assets/img/default_cat.svg";
 import useCatLoverApp from "../hooks/useCatLoverApp"
 import { isEmtyOrNullArrary } from "../helpers/general"
+import { ReactComponent as Dislike } from "../assets/img/dislike.svg";
 
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -19,6 +20,12 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import DirectionsIcon from '@material-ui/icons/Directions';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,50 +49,47 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       backgroundColor: red[500],
+    },    root: {
+      padding: '2px 4px',
+      display: 'flex',
+      alignItems: 'center',
+      width: 400,
+    },
+    input: {
+      marginLeft: theme.spacing(1),
+      flex: 1,
+    },
+    iconButton: {
+      padding: 10,
+    },
+    divider: {
+      height: 28,
+      margin: 4,
     },
   }),
 );
 
 const CatDetailsContainer = (props: any) => {
-  console.log("DAITAILS", props)
-  const { selectedCat, setCatAsFavorite, getCatDetails, favoriteList, deleteFromFavorites } = useCatLoverApp()
-  console.log("selectedCat", selectedCat)
-
-  let isCatinFavourite: any = []
+  console.log("USE PROPS", props)
+  const { selectedCat, setCatAsFavorite, getCatDetails, favoriteList, deleteFromFavorites,getCatFavouriteList ,catIdLoaded } = useCatLoverApp()
+  console.log("USE CAT", selectedCat)
+  console.log("USE FAVORITE LIST", favoriteList)
 
   let propsLocationExist = isEmtyOrNullArrary(props.data.location)
   let favoritesListExist = isEmtyOrNullArrary(favoriteList)
   let selectedCatExist = isEmtyOrNullArrary(selectedCat)
 
-  // const isFavorite = () => {
-  //   let cat: any = selectedCat
-  //   if (!favoritesListExist && !selectedCatExist) {
-  //     cat = favoriteList.filter((cat: any) => {
-  //       return cat.image_id === selectedCat[0].id
-  //     })
-  //     console.log("isfavorite", cat)
-  //   }
-  //   return cat
-  // }
-  const [stateFavourite, setcatfavourite] = useState(false)
+  const [stateFavourite, setCatfavourite] = useState(false)
 
-  let catInfavouriteslist: any = []
+  let IsCatInfavouritesList: any = []
 
   function isIsFavoriteList(obj: any, list: any) {
-    if (!favoritesListExist) {
-      var i;
-      for (i = 0; i < list.length; i++) {
+      for (var i = 0; i < list.length; i++) {
         if (list[i].image_id === obj[0].id) {
-          catInfavouriteslist = [list[i]]
-          if (!stateFavourite) {
-            setcatfavourite(false)
-
-          }
+          IsCatInfavouritesList = [list[i]]
           return true;
         }
       }
-
-    }
     return false;
   }
 
@@ -95,30 +99,41 @@ const CatDetailsContainer = (props: any) => {
 
   }
   const handleDeletItemFromFavorites = () => {
-
-    deleteFromFavorites(catInfavouriteslist[0].id, selectedCat)
+    deleteFromFavorites(IsCatInfavouritesList[0].id, selectedCat)
   }
 
+  //Check if route return location properties ex:(id param:)
   useEffect(() => {
-    if (propsLocationExist || favoriteList.length === 0) {
-      getCatDetails(props.data.catId)
-      console.log("NOt HAS STATE", propsLocationExist)
-
+    if (!propsLocationExist) {
+      if(props.data.catId!==catIdLoaded){
+       getCatDetails(props.data.catId)
+      }
+      console.log("propsLocationExist USE LIST", propsLocationExist)
     }
+    if (!favoritesListExist) {
+       getCatFavouriteList()
+      console.log("favoritesListExist USE LIST", favoritesListExist)
+    }
+
   }, []);
   useEffect(() => {
-    let isCatFavourite = isIsFavoriteList(selectedCat, favoriteList)
-    // if (isCatFavourite && !stateFavourite) {
-    //   setcatfavourite(true)
-    // }
-    if (!isCatFavourite && stateFavourite) {
-      setcatfavourite(false)
+    if (favoritesListExist&&selectedCatExist) {
+       setCatfavourite(isIsFavoriteList(selectedCat, favoriteList))
+      console.log("isCatFavourite USE", isIsFavoriteList(selectedCat, favoriteList))
     }
   });
   const hasSelectedCat = () => {
     if (selectedCat == []) {
       return selectedCat.length < 0
     }
+  }
+
+  const HandleCopyLink=()=>{
+    var copyText:any = document.getElementById("LocationInput");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999)
+    document.execCommand("copy");
+    alert("Copied the text: " + copyText.value);
   }
 
 
@@ -132,11 +147,12 @@ const CatDetailsContainer = (props: any) => {
   };
 
   return (
-    <Card className={classes.card}>
+    <div>
+    {selectedCatExist?<Card className={classes.card}>
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-            R
+            CT
           </Avatar>
         }
         action={
@@ -144,8 +160,7 @@ const CatDetailsContainer = (props: any) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={isEmtyOrNullArrary(selectedCat[0].breeds)?selectedCat[0].breeds[0].name:''}
       />
       {selectedCatExist ? (<CardMedia
         className={classes.media}
@@ -155,62 +170,52 @@ const CatDetailsContainer = (props: any) => {
 
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p" style={{ wordBreak: 'break-all' }}>
-          {JSON.stringify(selectedCat)}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        {!stateFavourite ? <div onClick={handleDeletItemFromFavorites}>'X'</div> : <IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
+        {stateFavourite ? <div className={'dislike'} onClick={handleDeletItemFromFavorites}><Dislike/></div> : <IconButton onClick={handleSetItemAsFaforite} aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>}
-
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <IconButton
+        <Paper className={classes.root}>
+          <InputBase
+        className={classes.input}
+        id={'LocationInput'}
+        value={props.data.location.href}
+      />
+      <Divider className={classes.divider} orientation="vertical" />
+      <IconButton  onClick={HandleCopyLink} color="primary" className={classes.iconButton} aria-label="directions">
+      <FileCopyIcon />
+      </IconButton>
+    </Paper>
+        
+      </CardActions>
+      {isEmtyOrNullArrary(selectedCat[0].breeds)?
+      <div style={{width:'100%'}}>
+      <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
           })}
           onClick={handleExpandClick}
           aria-expanded={expanded}
           aria-label="show more"
-        >
+          >
           <ExpandMoreIcon />
         </IconButton>
-      </CardActions>
+        {selectedCat[0].breeds.length>0?selectedCat[0].breeds[0].name:''} breed details
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>Method:</Typography>
+      <CardContent>
           <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-            minutes.
+      {JSON.stringify(selectedCat[0].breeds)}
+     
           </Typography>
           <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-            heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-            browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
-            and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
-            pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
-            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
-            without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
-            medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
-            again without stirring, until mussels have opened and rice is just tender, 5 to 7
-            minutes more. (Discard any mussels that don’t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then serve.
           </Typography>
         </CardContent>
-      </Collapse>
+      </Collapse> </div>:null}
     </Card>
+   :null}
+    
+    </div>
   );
 }
-
-// const CatDetailsContainer = ({data,location}:any) => (
-//   <AppContext.Consumer>
-//     {context => <CatDetails context={[context, data,location]} />}
-//   </AppContext.Consumer>
-// );
 export default CatDetailsContainer;

@@ -15,7 +15,9 @@ const CatLoverAppProvider =(props:any)=>{
       selectedBreed: "no",
       favoriteList:[],
       dataLoaded:false,
-      breedsList:[]
+      catIdLoaded:"",
+      breedsList:[],
+      
     })
 
     useEffect(() => {
