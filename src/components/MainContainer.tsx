@@ -4,7 +4,7 @@ import Dialog from "@material-ui/core/Dialog";
 import "../styles/app.scss";
 import Grid from "../views/Catgrid/Grid";
 import CatDetailsContainer from "../components/CatDetails"
-import Catbreedlist from "../views/Carbreed/Catbreedlist"
+import Catbreedlist from "../views/Catbreed/Catbreedlist"
 
 const MainContainer = () => {
   interface ICatDetailsProps extends RouteComponentProps {
@@ -12,7 +12,6 @@ const MainContainer = () => {
   }
   let IGrid = (props: ICatDetailsProps) => <Grid data={props} />
   let ICatDetails = (props: ICatDetailsProps) => <CatDetailsContainer data={props} />
-  let ICatBreeds = (props: ICatDetailsProps) => <Catbreedlist data={props} />
 
   function Routes(props:any) {
     return (
@@ -21,7 +20,6 @@ const MainContainer = () => {
           <ICatDetails path="/cat/:catId" />
           <IGrid path="/breeds" />
           <IGrid path="/favourites" />
-
         </Router>
     );
   }

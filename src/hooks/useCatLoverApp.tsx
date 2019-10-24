@@ -9,52 +9,41 @@ import { isEmtyOrNullArrary } from "../helpers/general"
 const useCatLoverApp = () => {
   const [state, setstate]: any = useContext(CatLoverAppContext);
 
+  // Get cat details if no exist
   const getCatDetails = (id: string) => {
     let selectedCat = state.catlist.filter((cat: any) => {
       return cat.id === id;
     });
-    // if not in catlist
+    // if not in app state call api
     if (!isEmtyOrNullArrary(selectedCat)) {
       catApis.getCAtById(id).then((response: any) => {
         console.log("CAt DETAILS FROM API", response);
-
         setstate((state: Iappstate) => ({ ...state, selectedCat: [response.data],catIdLoaded:id }));
       })
-
     } else {
-
       setstate((state: Iappstate) => ({ ...state, selectedCat: selectedCat,catIdLoaded:id }));
     }
-
-    //  setSelectesCat(selectedCat)
     return selectedCat;
   };
 
+  //Loads more cats
   const handleLoadMore = () => {
     let num = state.pageNumber + 1;
     catApis.loadMoreCats(num).then((response: any) => {
-      console.log(state);
       setCatBreedList(response.data);
     });
   };
 
+  //Sets cat as favorite
   const setCatAsFavorite = (id: string, cat: any) => {
-    // let mcatlist=state.catlist
-
-    // let newCatlist = mcatlist.filter((item:any) => {
-    //   return item !== cat[0]
-    // })
-
-    // setstate((state: any) => ({ ...state, catlist:newCatlist}));
-    console.log("Stede favorite", cat);
-
     catApis.setCatAsFavorite(id).then((response: any) => {
       catApis.getFavouritesList().then((response: any) => {
         setCatFavouriteList(response.data);
       });
-      console.log(response);
     });
   }
+
+  //Deletes cat from favorites
   const deleteFromFavorites = (id: number, cat: any) => {
     if(cat){
       setCatBreedList(cat);
@@ -68,12 +57,14 @@ const useCatLoverApp = () => {
       }
     });
   }
+  //Gets favoute cat list
   const getCatFavouriteList=()=>{
     catApis.getFavouritesList().then((response: any) => {
       setCatFavouriteList(response.data);
     });
   }
 
+  //Sets favorite list in app state
   const setCatFavouriteList = (list: any) => {
     setstate((state: any) => ({ ...state, favoriteList: list }));
   };
@@ -82,7 +73,6 @@ const useCatLoverApp = () => {
   };
 
   const setCatBreedList = (list: any) => {
-
     let breedList: any = [];
     let catlist: any = list
     list.map((listitem: any) => {
@@ -99,9 +89,11 @@ const useCatLoverApp = () => {
     previousCatBreedlist.push(...breedList);
     console.log("No FILTERD CaTS BREED", previousCatlist);
     console.log("No FILTERD BREED", previousCatBreedlist);
+
+    // Rmove dublicates from cat list breed list
+
     const filteredCatsList = removeDublicates(previousCatlist)
     const filteredBreedList = removeDublicates(previousCatBreedlist)
-    // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
     console.log("FILTERD CATS BREED", filteredCatsList);
     console.log("FILTERD BREED", filteredBreedList);
     setstate((state: Iappstate) => ({ ...state, breedsList: filteredBreedList, catlist: filteredCatsList, dataLoaded: true, }));

@@ -2,6 +2,17 @@ import React, { useState,useEffect } from 'react';
 import catApis from "./helpers/apicalls";
 import {removeDublicates}from "./helpers/general";
 
+export interface Iappstate {
+  catlist: never[];
+  pageNumber: number;
+  selectedCat: never[];
+  selectedBreed: string;
+  favoriteList: never[];
+  dataLoaded: boolean;
+  catIdLoaded: string;
+  breedsList: never[];
+}
+
 
 // initilize
 const CatLoverAppContext=React.createContext([{}, () => {}]);
@@ -20,6 +31,7 @@ const CatLoverAppProvider =(props:any)=>{
       
     })
 
+    // Get data from apis fon fisrt load
     useEffect(() => {
       catApis.getTenRandomCats().then((response: any) => {
        setCatBreedList(response.data);
@@ -29,15 +41,14 @@ const CatLoverAppProvider =(props:any)=>{
        });
     }, []);
 
-    const setCatFavouriteList = (list:any) => {
 
+    const setCatFavouriteList = (list:any) => {
       let catlist:any=list
       let previousCatlist: any = state.favoriteList;
       previousCatlist.push(...catlist);
       setState((state: any) => ({ ...state, favoriteList: previousCatlist }));
     };
     const setCatBreedList = (list:any) => {
-
       let breedList: any = [];
       let catlist:any=list
       list.map((listitem: any) => {
@@ -55,7 +66,6 @@ const CatLoverAppProvider =(props:any)=>{
       console.log("No FILTERD BREED", previousCatBreedlist);
       const filteredCatsList = removeDublicates(previousCatlist)
       const filteredBreedList = removeDublicates(previousCatBreedlist)
-      // Logs ["Fashion Designer", "Web Developer", "Web Designer"]
       console.log("FILTERD CATS BREED", filteredCatsList);
       console.log("FILTERD BREED", filteredBreedList);
       setState((state: any) => ({ ...state, breedsList: filteredBreedList,catlist: filteredCatsList, dataLoaded: true, }));

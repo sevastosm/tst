@@ -3,7 +3,7 @@ import { ReactComponent as FavoriteCatsBasket } from "../../assets/img/favoriteC
 import CatItem from "./CatItem";
 import FavouriteCatitem from "./FavouriteCatitem";
 import useCatLoverApp from "../../hooks/useCatLoverApp";
-import Catbreedlist from "../Carbreed/Catbreedlist";
+import Catbreedlist from "../Catbreed/Catbreedlist";
 import Button from "@material-ui/core/Button";
 
 const Grid = (props: any) => {
